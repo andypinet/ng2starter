@@ -1,0 +1,20 @@
+options:
+
+variables:
+  width: 96
+
+scss:
+  .app:
+    fz: 96
+    main:
+      fzs: 124
+      test:
+        z: 1
+    footer&:
+      fz: 12
+      h3:
+        w: 3
+  body:
+    fz: 96
+    '&--ios7':
+      zs: 343

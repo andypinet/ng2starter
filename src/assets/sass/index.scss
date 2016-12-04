@@ -1,0 +1,6 @@
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+@import "../../../node_modules/sassdash/scss/sassdash";
+@import "test";
+$styles: require("./src/assets/sass/style.js");
+
+@import "bundle";

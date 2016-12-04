@@ -1,0 +1,25 @@
+@mixin smartfinder-frame() {
+  body, html, app {
+    width: 100%;
+    height: 100%;
+  }
+  app {
+    display: grid;
+    grid-template-columns: 300px auto;
+    grid-template-rows: 100px auto;
+    grid-template-areas: "header header header header"
+                         "nav main main main"
+  }
+
+  header {
+    grid-area: header;
+  }
+
+  nav {
+    grid-area: nav;
+  }
+
+  main {
+    grid-area: main;
+  }
+}

@@ -1,0 +1,92 @@
+$GLOBAL_STYLE_PLUS: plus !global;
+$GLOBAL_STYLE_MIDDLE: middle !global;
+$GLOBAL_STYLE_SMALL: small !global;
+$GLOBAL_STYLE_ANDROID: android !global;
+
+$global-style: (
+  plus: (),
+  middle: (),
+  small: ()
+) !global;
+
+$global-media-style: (
+  plus: $com-zlui-media-ios-iphone6-plus-media-query,
+  middle: $com-zlui-media-ios-iphone6-media-query,
+  small: $com-zlui-media-ios-iphone5-media-query
+) !global;
+
+@mixin global-set-global-media-style($media, $value) {
+  @if map-has-key($global-style, $media) == false {
+    $global-style: map-deep-set($global-style, $media, ()) !global;
+  }
+  $global-media-style: map-deep-set($global-media-style, $media, $value) !global;
+}
+
+@include global-set-global-media-style($GLOBAL_STYLE_ANDROID, unquote("screen and (width: 360px)"));
+
+@debug $global-media-style;
+
+@mixin global-register-style($key, $value, $media: plus) {
+  $selector: #{&};
+  @if map-has-key(map-get($global-style, $media), $selector) == false {
+    $global-style: map-deep-set($global-style, $media, $selector, ()) !global;
+  }
+  $global-style: map-deep-set($global-style, $media, $selector, $key, $value) !global;
+}
+
+@mixin global-register-media-style($key, $value) {
+  @include global-register-style($key, com-zlui-media-mobile-ios-design-to-plus($value));
+  @include global-register-style($key, com-zlui-media-mobile-ios-design-to-media($value), $GLOBAL_STYLE_MIDDLE);
+  @include global-register-style($key, com-zlui-media-mobile-ios-design-to-small($value), $GLOBAL_STYLE_SMALL);
+}
+
+@mixin global-register-media-style-map($map) {
+  @each $key, $value in $map  {
+    @include global-register-media-style($key, $value);
+  }
+}
+
+@function global-desgin-to-vw($value) {
+  @return strip-unit($value) / 1242 * 100 + 0vw;
+}
+
+@mixin generate-media-style($media: $GLOBAL_STYLE_PLUS) {
+  @if map-has-key($global-style, $media) {
+    $styles: map-deep-get($global-style, $media);
+    @if $styles != null {
+      @each $selector, $style in $styles {
+        #{$selector} {
+          @each $prop, $value in $style {
+            #{$prop}: $value
+          }
+        }
+      };
+    }
+  }
+}
+
+@mixin generate-all-media-style() {
+  @each $mediakey, $mediavalue in $global-media-style {
+    @if str-length($mediavalue) == 0 {
+      @include generate-media-style();
+    } @else {
+      @media #{$mediavalue} {
+        @include generate-media-style($mediakey);
+      }
+    }
+  }
+}
+
+$global-style-prop-replece: (
+  fz: font-size
+) !global;
+
+@mixin M($key, $value) {
+  $retkey: $key;
+  @if type-of($key) == string {
+    @if map-has-key($global-style-prop-replece, $key) {
+      $retkey: map-get($global-style-prop-replece, $ke y);
+    }
+  }
+  @include global-register-media-style($retkey, $value);
+}
